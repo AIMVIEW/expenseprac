@@ -29,4 +29,20 @@ def form(request):
         return render(request, "form.html")
     
 def edit(request,person_id):
-    return render(request,"edit.html")
+    if request.method == "POST":
+        person = Person.objects.get(id=person_id)
+        person.name = request.POST['name']
+        person.age = request.POST["age"]
+        person.save()
+        messages.success(request,"succesfully edited")
+        return redirect("/")
+    else:
+        #ดึงข้อมูลปกที่ต้องการแก้
+        person = Person.objects.get(id= person_id)
+        return render(request,"edit.html",{"person":person})
+
+def delete(request,person_id):
+    person = Person.objects.get(id = person_id)
+    person.delete()
+    messages.success(request,"succesfully deleted")
+    return redirect("/")
